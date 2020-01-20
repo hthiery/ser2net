@@ -1226,9 +1226,11 @@ net_fd_write(port_info_t *port, net_info_t *netcon,
     }
 
     to_send = buf->cursize - *pos;
-    if (to_send <= 0)
-	/* Don't send empty packets, that can confuse UDP clients. */
-	return;
+    if (to_send <= 0) {
+        /* Don't send empty packets, that can confuse UDP clients. */
+        *pos = buf->cursize;
+        return;
+    }
 
     reterr = net_write(netcon->fd, buf->buf + *pos, to_send,
 		       0, netcon->udpraddr, netcon->udpraddrlen);
